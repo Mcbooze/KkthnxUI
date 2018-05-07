@@ -198,10 +198,15 @@ local function UpdateIcons(self)
 end
 
 function Module:OnInitialize()
-	if C["Raidframe"].RaidUtility == false then return end
+	if C["Raidframe"].RaidUtility == false then
+		return
+	end
 
-	--Create main frame
-	local RaidUtilityPanel = CreateFrame("Frame", "RaidUtilityPanel", UIParent, "SecureHandlerClickTemplate")
+	-- Create main frame
+	local RaidUtilityPanel = CreateFrame("Frame", "RaidUtilityPanel", UIParent, "SecureHandlerBaseTemplate")
+	RaidUtilityPanel:SetScript("OnMouseUp", function(panel, ...)
+		SecureHandler_OnClick(panel, "_onclick", ...);
+	end)
 	RaidUtilityPanel:SetTemplate("Transparent")
 	RaidUtilityPanel:SetWidth(230)
 	RaidUtilityPanel:SetHeight(PANEL_HEIGHT)
