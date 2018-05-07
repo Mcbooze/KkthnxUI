@@ -81,7 +81,7 @@ local function PostCreateAura(self, button)
 end
 
 local function PostUpdateAura(self, unit, button, index)
-	local name, _, _, _, debuffType, duration, expiration, caster, isStealable = UnitAura(unit, index, button.filter)
+	local name, _, _, debuffType, duration, expiration, caster, isStealable = UnitAura(unit, index, button.filter)
 	local isPlayer = (caster == "player" or caster == "vehicle")
 	local isFriend = unit and UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)
 

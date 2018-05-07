@@ -17,6 +17,8 @@ local SetCVar = _G.SetCVar
 local SetUIPanelAttribute = _G.SetUIPanelAttribute
 local WORLDMAP_FULLMAP_SIZE = _G.WORLDMAP_FULLMAP_SIZE
 local WORLDMAP_WINDOWED_SIZE = _G.WORLDMAP_WINDOWED_SIZE
+local C_Map_GetCurrentMapID = _G.C_Map.GetCurrentMapID
+local C_Map_GetPlayerMapPosition = _G.C_Map.GetPlayerMapPosition
 
 local INVERTED_POINTS = {
 	["TOPLEFT"] = "BOTTOMLEFT",
@@ -71,9 +73,9 @@ function Module:PLAYER_REGEN_DISABLED()
 end
 
 local inRestrictedArea = false
-function Module:PLAYER_ENTERING_WORLD()
-	local x = GetPlayerMapPosition("player")
-	if not x then
+function Module:WORLD_MAP_UPDATE()
+	local position = C_Map_GetPlayerMapPosition(C_Map_GetCurrentMapID(), "player")
+	if not position then
 		inRestrictedArea = true
 		self:CancelTimer(self.CoordsTimer)
 		self.CoordsTimer = nil
@@ -81,12 +83,13 @@ function Module:PLAYER_ENTERING_WORLD()
 		CoordsHolder.mouseCoords:SetText("")
 	elseif not self.CoordsTimer then
 		inRestrictedArea = false
-		self.CoordsTimer = self:ScheduleRepeatingTimer("UpdateCoords", 0.05)
+		self.CoordsTimer = self:ScheduleRepeatingTimer('UpdateCoords', 0.05)
 	end
 end
 
 function Module:UpdateCoords()
 	if (not WorldMapFrame:IsShown() or inRestrictedArea) then return end
+	local x, y = C_Map_GetPlayerMapPosition(C_Map_GetCurrentMapID(), "player"):GetXY()
 	local x, y = GetPlayerMapPosition("player")
 	x = x and K.Round(100 * x, 2) or 0
 	y = y and K.Round(100 * y, 2) or 0
@@ -147,7 +150,7 @@ function Module:OnEnable()
 		self.CoordsTimer = self:ScheduleRepeatingTimer("UpdateCoords", 0.05)
 		Module:PositionCoords()
 
-		self:RegisterEvent("PLAYER_ENTERING_WORLD")
+		self:RegisterEvent("WORLD_MAP_UPDATE")
 	end
 
 	if (C["WorldMap"].SmallWorldMap) then

@@ -1,20 +1,17 @@
 --[[--------------------------------------------------------------------
-LibResInfo-1.0
-Library to provide information about resurrections in your group.
-Copyright 2012-2018 Phanx <addons@phanx.net> / zlib License
-https://github.com/Phanx/LibResInfo
+	LibResInfo-1.0
+	Library to provide information about resurrections in your group.
+	Copyright 2012-2018 Phanx <addons@phanx.net> / zlib License
+	https://github.com/Phanx/LibResInfo
 ------------------------------------------------------------------------
-TODO:
-* Handle Reincarnation with some guesswork?
-* Clear data when releasing spirit
+	TODO:
+	* Handle Reincarnation with some guesswork?
+	* Clear data when releasing spirit
 ----------------------------------------------------------------------]]
 
-local DEBUG_LEVEL = GetAddOnMetadata("LibResInfo-1.0", "Version") and 1 or 0
-local DEBUG_FRAME = ChatFrame3
+local IS_WOW_8 = GetBuildInfo():match("^8")
 
-------------------------------------------------------------------------
-
-local MAJOR, MINOR = "LibResInfo-1.0", 25
+local MAJOR, MINOR = "LibResInfo-1.0", 26
 assert(LibStub, MAJOR.." requires LibStub")
 assert(LibStub("CallbackHandler-1.0", true), MAJOR.." requires CallbackHandler-1.0")
 local lib, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
@@ -22,39 +19,44 @@ if not lib then return end
 
 ------------------------------------------------------------------------
 
-local callbacks = lib.callbacks or LibStub("CallbackHandler-1.0"):New(lib)
-local eventFrame = lib.eventFrame or CreateFrame("Frame")
-
-local guidFromUnit = lib.guidFromUnit or {} -- t[unit] = guid -- table lookup is faster than calling UnitGUID
-local nameFromGUID = lib.nameFromGUID or {} -- t[guid] = name
-local unitFromGUID = lib.unitFromGUID or {} -- t[guid] = unit
-
-local castingSingle = lib.castingSingle or {} -- t[casterGUID] = { startTime = <number>, endTime = <number>, target = <guid> }
-local castingMass = lib.castingMass or {} -- t[casterGUID] = endTime
-local hasPending = lib.hasPending or {} -- t[targetGUID] = endTime
-
-local hasSoulstone = lib.hasSoulstone or {} -- t[targetGUID] = <boolean>
-local hasReincarnation = lib.hasReincarnation or {} -- t[targetGUID] = <boolean>
-local isDead = lib.isDead or {} -- t[targetGUID] = <boolean>
-local isGhost = lib.isGhost or {} -- t[targetGUID] = <boolean>
+local DEBUG_LEVEL = GetAddOnMetadata("LibResInfo-1.0", "Version") and 1 or 0
+local DEBUG_FRAME = ChatFrame3
 
 ------------------------------------------------------------------------
 
-lib.callbacks = callbacks
-lib.eventFrame = eventFrame
+local callbacks        = lib.callbacks        or LibStub("CallbackHandler-1.0"):New(lib)
+local eventFrame       = lib.eventFrame       or CreateFrame("Frame")
 
-lib.guidFromUnit = guidFromUnit
-lib.nameFromGUID = nameFromGUID
-lib.unitFromGUID = unitFromGUID
+local guidFromUnit     = lib.guidFromUnit     or {} -- t[unit] = guid -- table lookup is faster than calling UnitGUID
+local nameFromGUID     = lib.nameFromGUID     or {} -- t[guid] = name
+local unitFromGUID     = lib.unitFromGUID     or {} -- t[guid] = unit
 
-lib.castingSingle = castingSingle
-lib.castingMass = castingMass
-lib.hasPending = hasPending
+local castingSingle    = lib.castingSingle    or {} -- t[casterGUID] = { startTime = <number>, endTime = <number>, target = <guid> }
+local castingMass      = lib.castingMass      or {} -- t[casterGUID] = endTime
+local hasPending       = lib.hasPending       or {} -- t[targetGUID] = endTime
 
-lib.hasSoulstone = hasSoulstone
-lib.hasReincarnation = hasReincarnation
-lib.isDead = isDead
-lib.isGhost = isGhost
+local hasSoulstone     = lib.hasSoulstone     or {} -- t[targetGUID] = <boolean>
+local hasReincarnation = lib.hasReincarnation or {} -- t[targetGUID] = <boolean>
+local isDead           = lib.isDead           or {} -- t[targetGUID] = <boolean>
+local isGhost          = lib.isGhost          or {} -- t[targetGUID] = <boolean>
+
+------------------------------------------------------------------------
+
+lib.callbacks          = callbacks
+lib.eventFrame         = eventFrame
+
+lib.guidFromUnit       = guidFromUnit
+lib.nameFromGUID       = nameFromGUID
+lib.unitFromGUID       = unitFromGUID
+
+lib.castingSingle      = castingSingle
+lib.castingMass        = castingMass
+lib.hasPending         = hasPending
+
+lib.hasSoulstone       = hasSoulstone
+lib.hasReincarnation   = hasReincarnation
+lib.isDead             = isDead
+lib.isGhost            = isGhost
 
 ------------------------------------------------------------------------
 
@@ -66,16 +68,16 @@ local RESURRECTING = GetSpellInfo(160029)
 
 local singleSpells = {
 	-- Class Abilities
-	[2008] = GetSpellInfo(2008), -- Ancestral Spirit (Shaman)
-	[7328] = GetSpellInfo(7328), -- Redemption (Paladin)
-	[2006] = GetSpellInfo(2006), -- Resurrection (Priest)
+	[2008]   = GetSpellInfo(2008),   -- Ancestral Spirit (Shaman)
+	[7328]   = GetSpellInfo(7328),   -- Redemption (Paladin)
+	[2006]   = GetSpellInfo(2006),   -- Resurrection (Priest)
 	[115178] = GetSpellInfo(115178), -- Resuscitate (Monk)
-	[50769] = GetSpellInfo(50769), -- Revive (Druid)
-	[982] = GetSpellInfo(982), -- Revive Pet (Hunter)
+	[50769]  = GetSpellInfo(50769),  -- Revive (Druid)
+	[982]    = GetSpellInfo(982),    -- Revive Pet (Hunter)
 	-- Items
-	[8342] = GetSpellInfo(8342), -- Defibrillate (Goblin Jumper Cables)
-	[22999] = GetSpellInfo(22999), -- Defibrillate (Goblin Jumper Cables XL)
-	[54732] = GetSpellInfo(54732), -- Defibrillate (Gnomish Army Knife)
+	[8342]   = GetSpellInfo(8342),   -- Defibrillate (Goblin Jumper Cables)
+	[22999]  = GetSpellInfo(22999),  -- Defibrillate (Goblin Jumper Cables XL)
+	[54732]  = GetSpellInfo(54732),  -- Defibrillate (Gnomish Army Knife)
 	[164729] = GetSpellInfo(164729), -- Defibrillate (Ultimate Gnomish Army Knife)
 	[199119] = GetSpellInfo(199119), -- Failure Detection Aura (Failure Detection Pylon) -- NEEDS CHECK
 	[187777] = GetSpellInfo(187777), -- Reawaken (Brazier of Awakening)
@@ -92,7 +94,7 @@ local massSpells = {
 ------------------------------------------------------------------------
 
 local next, pairs, GetNumGroupMembers, GetTime, IsInGroup, IsInRaid, UnitAura, UnitCastingInfo, UnitGUID, UnitHasIncomingResurrection, UnitHealth, UnitIsConnected, UnitIsDead, UnitIsDeadOrGhost, UnitIsGhost, UnitName
-= next, pairs, GetNumGroupMembers, GetTime, IsInGroup, IsInRaid, UnitAura, UnitCastingInfo, UnitGUID, UnitHasIncomingResurrection, UnitHealth, UnitIsConnected, UnitIsDead, UnitIsDeadOrGhost, UnitIsGhost, UnitName
+    = next, pairs, GetNumGroupMembers, GetTime, IsInGroup, IsInRaid, UnitAura, UnitCastingInfo, UnitGUID, UnitHasIncomingResurrection, UnitHealth, UnitIsConnected, UnitIsDead, UnitIsDeadOrGhost, UnitIsGhost, UnitName
 
 ------------------------------------------------------------------------
 
@@ -128,6 +130,28 @@ do
 	end
 end
 
+local function UnitAuraByName(unit, searchName, filter)
+	-- Helper function to accommodate changes in WoW 8.0:
+	-- UnitAura no longer accepts an aura name, so we have to scan all auras and check their names to find the one we want
+	-- UnitAura no longer returns a spell rank (arg2)
+	for i = 1, 40 do
+		local name, rank, texture, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, isCastByPlayer, nameplateShowAll, timeMod
+		if IS_WOW_8 then
+			-- rank removed, other args shifted left
+			name, texture, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, isCastByPlayer, nameplateShowAll, timeMod = UnitAura(unit, i, filter)
+		else
+			name, rank, texture, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, isCastByPlayer, nameplateShowAll, timeMod = UnitAura(unit, i, filter)
+		end
+
+		if not name then
+			break
+		elseif name == searchName then
+			-- rank excluded in either case
+			return name, texture, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, isCastByPlayer, nameplateShowAll, timeMod
+		end
+	end
+end
+
 ------------------------------------------------------------------------
 
 lib.callbacksInUse = lib.callbacksInUse or {}
@@ -140,16 +164,16 @@ function callbacks:OnUsed(lib, callback)
 	if not next(lib.callbacksInUse) then
 		debug(1, "Callbacks in use! Starting up...")
 		eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-		eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 		eventFrame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
+		eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+		eventFrame:RegisterEvent("RESURRECT_REQUEST")
+		eventFrame:RegisterEvent("UNIT_AURA")
+		eventFrame:RegisterEvent("UNIT_CONNECTION")
+		eventFrame:RegisterEvent("UNIT_FLAGS")
 		eventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 		eventFrame:RegisterEvent("UNIT_SPELLCAST_START")
 		eventFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
 		eventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-		eventFrame:RegisterEvent("UNIT_AURA")
-		eventFrame:RegisterEvent("UNIT_CONNECTION")
-		eventFrame:RegisterEvent("UNIT_FLAGS")
-		eventFrame:RegisterEvent("RESURRECT_REQUEST")
 		eventFrame:GROUP_ROSTER_UPDATE("OnUsed")
 	end
 	lib.callbacksInUse[callback] = true
@@ -201,10 +225,10 @@ end
 --	Returns: resType (string), endTime (number), caster (unitID), casterGUID
 --	* All returns are nil if no res is being cast on the unit.
 --	* resType is one of:
--- - SELFRES if the unit has a Soulstone or other self-res ability available,
--- - PENDING if the unit already has a res available to accept,
--- - CASTING if a res is being cast on the unit, or
--- - MASSRES if a mass res is being cast.
+--   - SELFRES if the unit has a Soulstone or other self-res ability available,
+--   - PENDING if the unit already has a res available to accept,
+--   - CASTING if a res is being cast on the unit, or
+--   - MASSRES if a mass res is being cast.
 --	* caster and casterGUID are nil if the unit is being mass-ressed.
 ------------------------------------------------------------------------
 
@@ -443,15 +467,28 @@ end
 
 ------------------------------------------------------------------------
 
-function eventFrame:UNIT_SPELLCAST_START(event, unit, spellName, _, _, spellID)
+function eventFrame:UNIT_SPELLCAST_START(event, unit, ...)
+	local spellID, _
+	if IS_WOW_8 then
+		_, spellID = ...
+	else
+		_, _, _, spellID = ...
+	end
+
 	local resType = massSpells[spellID] and "mass" or singleSpells[spellID] and "single"
 	if not resType then return end
 
 	local guid = guidFromUnit[unit]
 	if not guid then return end
-	debug(3, event, nameFromGUID[guid], "casting", spellName)
+	debug(3, event, nameFromGUID[guid], "casting", (GetSpellInfo(spellID)))
 
-	local _, _, _, _, startTime, endTime = UnitCastingInfo(unit)
+	local startTime, endTime, _
+	if IS_WOW_8 then
+		_, _, _, startTime, endTime = UnitCastingInfo(unit)
+	else
+		_, _, _, _, startTime, endTime = UnitCastingInfo(unit)
+	end
+
 	if resType == "mass" then
 		castingMass[guid] = endTime / 1000
 		debug(1, ">> MassResStarted", nameFromGUID[guid])
@@ -465,14 +502,21 @@ function eventFrame:UNIT_SPELLCAST_START(event, unit, spellName, _, _, spellID)
 	end
 end
 
-function eventFrame:UNIT_SPELLCAST_SUCCEEDED(event, unit, spellName, _, _, spellID)
+function eventFrame:UNIT_SPELLCAST_SUCCEEDED(event, unit, ...)
+	local spellID, _
+	if IS_WOW_8 then
+		_, spellID = ...
+	else
+		_, _, _, spellID = ...
+	end
+
 	local resType = massSpells[spellID] and "mass" or singleSpells[spellID] and "single"
 	if not resType then return end
 
 	local guid = guidFromUnit[unit]
 	if not guid then return end
 
-	debug(3, event, nameFromGUID[guid], "finished", spellName)
+	debug(3, event, nameFromGUID[guid], "finished", (GetSpellInfo(spellID)))
 
 	if resType == "mass" then
 		castingMass[guid] = nil
@@ -496,14 +540,21 @@ function eventFrame:UNIT_SPELLCAST_SUCCEEDED(event, unit, spellName, _, _, spell
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 end
 
-function eventFrame:UNIT_SPELLCAST_STOP(event, unit, spellName, _, _, spellID)
+function eventFrame:UNIT_SPELLCAST_STOP(event, unit, ...)
+	local spellID, _
+	if IS_WOW_8 then
+		_, spellID = ...
+	else
+		_, _, _, spellID = ...
+	end
+
 	local resType = massSpells[spellID] and "mass" or singleSpells[spellID] and "single"
 	if not resType then return end
 
 	local guid = guidFromUnit[unit]
 	if not guid then return end
 
-	debug(3, event, nameFromGUID[guid], "stopped", spellName)
+	debug(3, event, nameFromGUID[guid], "stopped", (GetSpellInfo(spellID)))
 
 	if resType == "mass" then
 		if not castingMass[guid] then return end -- already SUCCEEDED
@@ -539,6 +590,10 @@ eventFrame.UNIT_SPELLCAST_INTERRUPTED = eventFrame.UNIT_SPELLCAST_STOP
 
 function eventFrame:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, combatEvent, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID, spellName, spellSchool)
 	if combatEvent ~= "SPELL_RESURRECT" then return end
+
+	if IS_WOW_8 then
+		timestamp, combatEvent, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID, spellName, spellSchool = CombatLogGetCurrentEventInfo()
+	end
 
 	local destUnit = unitFromGUID[destGUID]
 	if not destUnit then return end
@@ -602,7 +657,7 @@ function eventFrame:UNIT_AURA(event, unit)
 	if not guid then return end
 	--debug(5, event, unit)
 	if not isDead[guid] then
-		local stoned = UnitAura(unit, SOULSTONE)
+		local stoned = UnitAuraByName(unit, SOULSTONE)
 		if stoned ~= hasSoulstone[guid] then
 			if not stoned and UnitHealth(unit) <= 1 then
 				return
@@ -611,7 +666,7 @@ function eventFrame:UNIT_AURA(event, unit)
 			debug(2, nameFromGUID[guid], stoned and "gained" or "lost", SOULSTONE)
 		end
 	else
-		local reincarnation = UnitAura(unit, REINCARNATION, nil, "HARMFUL")
+		local reincarnation = UnitAuraByName(unit, REINCARNATION, "HARMFUL")
 		if reincarnation ~= hasReincarnation[guid] then
 			local endTime = GetTime() + RELEASE_PENDING_TIME
 			hasReincarnation[guid] = reincarnation
@@ -620,7 +675,7 @@ function eventFrame:UNIT_AURA(event, unit)
 			callbacks:Fire("LibResInfo_ResPending", unit, guid, endTime, true)
 		else
 			-- Rebirth, Raise Dead, Soulstone and Eternal Guardian leaves a debuff on the resurrected target
-			local resurrecting, _, _, _, _, _, expires = UnitAura(unit, RESURRECTING, nil, "HARMFUL")
+			local resurrecting, _, _, _, _, expires = UnitAuraByName(unit, RESURRECTING, "HARMFUL")
 			if resurrecting ~= hasPending[guid] then
 				hasPending[guid] = expires
 				debug(1, ">> ResPending", nameFromGUID[guid], RESURRECTING)
@@ -740,25 +795,42 @@ end)
 
 ------------------------------------------------------------------------
 
-SLASH_LIBRESINFO1 = "/lri"
-SlashCmdList.LIBRESINFO = function(input)
-	input = gsub(input, "[^A-Za-z0-9]", "")
-	if strlen(input) < 1 then return end
-	if strmatch(input, "%D") then
+if GetAddOnMetadata("LibResInfo-1.0", "Version") then
+	SLASH_LIBRESINFO1 = "/lri"
+	SlashCmdList.LIBRESINFO = function(input)
+		input = tostring(input or "")
+
+		local CURRENT_CHAT_FRAME
+		for i = 1, 10 do
+			local cf = _G["ChatFrame"..i]
+			if cf and cf:IsVisible() then
+				CURRENT_CHAT_FRAME = cf
+				break
+			end
+		end
+
+		local of = DEBUG_FRAME
+		DEBUG_FRAME = CURRENT_CHAT_FRAME
+
+		if string.match(input, "^%s*[0-9]%s*$") then
+			local v = tonumber(input)
+			debug(0, "Debug level set to", input)
+			DEBUG_LEVEL = v
+			DEBUG_FRAME = of
+			return
+		end
+
 		local f = _G[input]
 		if type(f) == "table" and type(f.AddMessage) == "function" then
-			DEBUG_FRAME = f
 			debug(0, "Debug frame set to", input)
-		else
-			debug(0, input, "is not a valid debug output frame!")
+			DEBUG_FRAME = f
+			return
 		end
-	else
-		local v = tonumber(input)
-		if v and v >= 0 then
-			DEBUG_LEVEL = v
-			debug(0, "Debug level set to", input)
-		else
-			debug(0, input, "is not a valid debug level!")
-		end
+
+		debug(0, "Version " .. MINOR .. " loaded. Usage:")
+		debug(0, NORMAL_FONT_COLOR_CODE .. "/lri " .. DEBUG_LEVEL .. "|r - change debug verbosity, valid range is 0-6")
+		debug(0, NORMAL_FONT_COLOR_CODE .. "/lri " .. of:GetName() .. "|r - change debug output frame")
+
+		DEBUG_FRAME = of
 	end
 end

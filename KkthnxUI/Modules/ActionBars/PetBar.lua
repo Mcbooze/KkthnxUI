@@ -11,7 +11,7 @@ local PetActionBar_ShowGrid = _G.PetActionBar_ShowGrid
 local PetActionBar_UpdateCooldowns = _G.PetActionBar_UpdateCooldowns
 local RegisterStateDriver = _G.RegisterStateDriver
 
--- Global variables that we don't cache, list them here for mikk's FindGlobals script
+-- Global variables that we don"t cache, list them here for mikk"s FindGlobals script
 -- GLOBALS: PetActionBarFrame, PetHolder, RightBarMouseOver, HoverBind, PetBarMouseOver
 
 if C["ActionBar"].PetBarHide then
@@ -30,16 +30,18 @@ PetBar:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
 PetBar:RegisterEvent("PET_BAR_UPDATE")
 PetBar:RegisterEvent("PET_BAR_UPDATE_USABLE")
 PetBar:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
-PetBar:RegisterEvent("PET_BAR_HIDE")
+if not K.BFA801 then
+	PetBar:RegisterEvent("PET_BAR_HIDE")
+end
 PetBar:RegisterEvent("UNIT_PET")
 PetBar:RegisterEvent("UNIT_FLAGS")
 PetBar:RegisterEvent("UNIT_AURA")
 PetBar:SetScript("OnEvent", function(self, event, arg1)
 	if event == "PLAYER_LOGIN" then
 		K.StylePet()
-		PetActionBar_ShowGrid = K.Noop
-		PetActionBar_HideGrid = K.Noop
-		PetActionBarFrame.showgrid = nil
+		PetActionBarFrame.showgrid = 1
+		PetActionBar_ShowGrid()
+
 		for i = 1, 10 do
 			local button = _G["PetActionButton"..i]
 			button:ClearAllPoints()
@@ -92,7 +94,7 @@ if C["ActionBar"].PetBarMouseover == true and C["ActionBar"].PetBarHorizontal ==
 		local b = _G["PetActionButton"..i]
 		b:SetAlpha(0)
 		b:HookScript("OnEnter", function()
-			PetBarMouseOver(1) end)
+		PetBarMouseOver(1) end)
 		b:HookScript("OnLeave", function()
 			if not HoverBind.enabled then
 				PetBarMouseOver(0)

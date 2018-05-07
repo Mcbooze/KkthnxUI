@@ -212,12 +212,6 @@ function K.CreateRaid(self, unit)
 		self.ResurrectIndicator:SetSize(30, 30)
 		self.ResurrectIndicator:SetPoint("CENTER", 0, -3)
 
-		-- Masterlooter icons
-		self.MasterLooterIndicator = self.Overlay:CreateTexture(nil, "OVERLAY")
-		self.MasterLooterIndicator:SetSize(11, 11)
-		self.MasterLooterIndicator:SetPoint("TOPLEFT", 8, 6)
-		self.MasterLooterIndicator:Show()
-
 		-- Leader icons
 		self.LeaderIndicator = self.Overlay:CreateTexture(nil, "OVERLAY")
 		self.LeaderIndicator:SetSize(12, 12)

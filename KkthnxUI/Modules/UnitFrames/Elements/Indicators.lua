@@ -210,12 +210,6 @@ function K.CreateLeaderIndicator(self)
 	self.LeaderIndicator:SetPoint("BOTTOM", self.Portrait, "TOPLEFT", 4, -5)
 end
 
-function K.CreateMasterLooterIndicator(self)
-	self.MasterLooterIndicator = self.Power:CreateTexture(nil, "OVERLAY")
-	self.MasterLooterIndicator:SetSize(14, 14)
-	self.MasterLooterIndicator:SetPoint("BOTTOM", self.Portrait, "TOPLEFT", 14, -5)
-end
-
 function K.CreatePhaseIndicator(self)
 	self.PhaseIndicator = self:CreateTexture(nil, "OVERLAY")
 	self.PhaseIndicator:SetSize(18, 18)

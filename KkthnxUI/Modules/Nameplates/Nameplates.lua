@@ -189,7 +189,7 @@ local totemData = {
 	[GetSpellInfo(210660)] = "Interface\\Icons\\spell_nature_invisibilitytotem", -- Tailwind Totem
 }
 
-local function CustomFilterList(_, unit, _, name, _, _, _, _, _, _, caster, _, nameplateShowSelf, _, _, _, _, nameplateShowAll)
+local function CustomFilterList(_, unit, name, _, _, _, _, _, _, caster, _, nameplateShowSelf, _, _, _, _, nameplateShowAll)
 	local allow = false
 
 	if caster == "player" then
@@ -701,7 +701,7 @@ local function StyleUpdate(self, unit)
 	end
 
 	local function PostUpdateAura(self, unit, button, index)
-		local name, _, _, _, debuffType, duration, expiration, caster = UnitAura(unit, index, button.filter)
+		local name, _, _, debuffType, duration, expiration, caster = UnitAura(unit, index, button.filter)
 
 		if button.isDebuff then
 			local color = DebuffTypeColor[debuffType] or DebuffTypeColor.none

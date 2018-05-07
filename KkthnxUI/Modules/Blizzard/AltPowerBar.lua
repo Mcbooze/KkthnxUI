@@ -65,7 +65,11 @@ bar:SetAllPoints(AltPowerBarHolder)
 bar:SetTemplate("Transparent", true)
 
 -- Event handling
-bar:RegisterEvent("UNIT_POWER")
+if K.BFA801 then
+	bar:RegisterEvent("UNIT_POWER_UPDATE")
+else
+	bar:RegisterEvent("UNIT_POWER")
+end
 bar:RegisterEvent("UNIT_POWER_BAR_SHOW")
 bar:RegisterEvent("UNIT_POWER_BAR_HIDE")
 bar:RegisterEvent("PLAYER_ENTERING_WORLD")

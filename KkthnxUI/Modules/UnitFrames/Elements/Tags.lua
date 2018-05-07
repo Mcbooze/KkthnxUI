@@ -128,7 +128,7 @@ oUF.Tags.Methods["KkthnxUI:GetNameColor"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["KkthnxUI:AltPowerCurrent"] = "UNIT_POWER UNIT_MAXPOWER"
+oUF.Tags.Events["KkthnxUI:AltPowerCurrent"] = "UNIT_POWER_UPDATE UNIT_MAXPOWER"
 oUF.Tags.Methods["KkthnxUI:AltPowerCurrent"] = function(unit)
 	local cur = UnitPower(unit, 0)
 	local max = UnitPowerMax(unit, 0)
@@ -430,7 +430,7 @@ oUF.Tags.Methods["KkthnxUI:NameplateSmartLevel"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["KkthnxUI:NameplateNameColor"] = "UNIT_POWER UNIT_FLAGS"
+oUF.Tags.Events["KkthnxUI:NameplateNameColor"] = "UNIT_POWER_UPDATE UNIT_FLAGS"
 oUF.Tags.Methods["KkthnxUI:NameplateNameColor"] = function(unit)
 	local reaction = UnitReaction(unit, "player")
 	local r, g, b = 0.33, 0.59, 0.33

@@ -41,8 +41,8 @@ end
 
 function Module:DisableBlizzard()
 	-- Look into what this does
-	ArtifactWatchBar:SetParent(K.UIFrameHider)
-	HonorWatchBar:SetParent(K.UIFrameHider)
+	-- ArtifactWatchBar:SetParent(K.UIFrameHider)
+	-- HonorWatchBar:SetParent(K.UIFrameHider)
 
 	ActionBarController:UnregisterAllEvents()
 	ActionBarController:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
@@ -52,22 +52,22 @@ function Module:DisableBlizzard()
 	MainMenuBar:SetAlpha(0)
 	MainMenuBar:SetScale(0.00001)
 
-	MainMenuExpBar:EnableMouse(false)
-	MainMenuExpBar:UnregisterAllEvents()
-	MainMenuExpBar:Hide()
-	MainMenuExpBar:SetAlpha(0)
-	MainMenuExpBar:SetScale(0.00001)
-	MainMenuExpBar:SetParent(K.UIFrameHider)
+	-- MainMenuExpBar:EnableMouse(false)
+	-- MainMenuExpBar:UnregisterAllEvents()
+	-- MainMenuExpBar:Hide()
+	-- MainMenuExpBar:SetAlpha(0)
+	-- MainMenuExpBar:SetScale(0.00001)
+	-- MainMenuExpBar:SetParent(K.UIFrameHider)
 
 	-- Trying to work around a bug sometimes happening
 	-- on level 20 starter edition characters.
-	MainMenuExpBar:SetScript("OnShow", nil)
-	MainMenuExpBar:SetScript("OnHide", nil)
-	MainMenuExpBar:SetScript("OnEvent", nil)
-	MainMenuExpBar:SetScript("OnUpdate", nil)
-	MainMenuExpBar:SetScript("OnEnter", nil)
-	MainMenuExpBar:SetScript("OnLeave", nil)
-	MainMenuExpBar:SetScript("OnValueChanged", nil)
+	-- MainMenuExpBar:SetScript("OnShow", nil)
+	-- MainMenuExpBar:SetScript("OnHide", nil)
+	-- MainMenuExpBar:SetScript("OnEvent", nil)
+	-- MainMenuExpBar:SetScript("OnUpdate", nil)
+	-- MainMenuExpBar:SetScript("OnEnter", nil)
+	-- MainMenuExpBar:SetScript("OnLeave", nil)
+	-- MainMenuExpBar:SetScript("OnValueChanged", nil)
 
 	for i = 1, MainMenuBar:GetNumChildren() do
 		local child = select(i, MainMenuBar:GetChildren())
@@ -84,9 +84,9 @@ function Module:DisableBlizzard()
 		_G["OverrideActionBarButton"..i]:EnableMouse(false) -- just in case it's still there
 	end
 
-	ReputationWatchBar:UnregisterAllEvents()
-	ReputationWatchBar:Hide()
-	ReputationWatchBar:SetParent(K.UIFrameHider)
+	-- ReputationWatchBar:UnregisterAllEvents()
+	-- ReputationWatchBar:Hide()
+	-- ReputationWatchBar:SetParent(K.UIFrameHider)
 
 	MainMenuBarArtFrame:UnregisterAllEvents()
 	MainMenuBarArtFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
@@ -119,8 +119,8 @@ function Module:DisableBlizzard()
 	MultiCastActionBarFrame:Hide()
 	MultiCastActionBarFrame:SetParent(K.UIFrameHider)
 
-	MainMenuBarMaxLevelBar:SetParent(K.UIFrameHider)
-	MainMenuBarMaxLevelBar:Hide()
+	-- MainMenuBarMaxLevelBar:SetParent(K.UIFrameHider)
+	-- MainMenuBarMaxLevelBar:Hide()
 
 	TalentMicroButtonAlert:UnregisterAllEvents()
 	TalentMicroButtonAlert:SetParent(K.UIFrameHider)

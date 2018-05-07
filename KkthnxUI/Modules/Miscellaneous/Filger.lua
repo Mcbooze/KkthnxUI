@@ -1,5 +1,5 @@
 local K, C, L = unpack(select(2, ...))
-if C["Unitframe"].Enable ~= true or C["Filger"].Enable ~= true then
+if C["Unitframe"].Enable ~= true or C["Filger"].Enable ~= true or K.BFA801 then
 	return
 end
 
@@ -84,10 +84,10 @@ end
 function Filger:UnitBuff(unitID, inSpellID, spn, absID)
 	if absID then
 		for i = 1, 40, 1 do
-			local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID = UnitBuff(unitID, i)
+			local name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID = UnitBuff(unitID, i)
 			if not name then break end
 			if inSpellID == spellID then
-				return name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID
+				return name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID
 			end
 		end
 	else
@@ -99,10 +99,10 @@ end
 function Filger:UnitDebuff(unitID, inSpellID, spn, absID)
 	if absID then
 		for i = 1, 40, 1 do
-			local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID = UnitDebuff(unitID, i)
+			local name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID = UnitDebuff(unitID, i)
 			if not name then break end
 			if inSpellID == spellID then
-				return name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID
+				return name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID
 			end
 		end
 	else

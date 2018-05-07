@@ -558,7 +558,7 @@ end
 
 function Module:SetUnitAura(tt, unit, index, filter)
 	if tt:IsForbidden() then return end
-	local _, _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
+	local _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
 	if id and C["Tooltip"].SpellID then
 		if caster then
 			local name = UnitName(caster)
@@ -674,9 +674,9 @@ function Module:OnEnable()
 	BNETMover:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 6, 204)
 	BNETMover:SetSize(250, 64)
 	BNToastFrame:SetTemplate("Transparent", true)
-	BNToastFrameCloseButton:SetSize(32, 32)
-	BNToastFrameCloseButton:SetPoint("TOPRIGHT", 4, 4)
-	BNToastFrameCloseButton:SkinCloseButton()
+	BNToastFrame.CloseButton:SetSize(32, 32)
+	BNToastFrame.CloseButton:SetPoint("TOPRIGHT", 4, 4)
+	BNToastFrame.CloseButton:SkinCloseButton()
 
 	K.Movers:RegisterFrame(BNETMover)
 	self:SecureHook(BNToastFrame, "SetPoint", "RepositionBNET")

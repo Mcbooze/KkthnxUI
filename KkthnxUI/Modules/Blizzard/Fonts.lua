@@ -181,18 +181,20 @@ local function UpdateBlizzardFonts()
 	end
 	_G.hooksecurefunc("LFGListCategorySelection_AddButton", SetLabelFontObject)
 
-	local function Channel()
-		for i = 1, MAX_DISPLAY_CHANNEL_BUTTONS do
-			local button = _G["ChannelButton"..i]
-			if button then
-				button:StripTextures()
-				button:SetHighlightTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight")
+	if not K.BFA801 then
+		local function Channel()
+			for i = 1, MAX_DISPLAY_CHANNEL_BUTTONS do
+				local button = _G["ChannelButton"..i]
+				if button then
+					button:StripTextures()
+					button:SetHighlightTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight")
 
-				_G["ChannelButton"..i.."Text"]:FontTemplate(NORMAL_FONT, 12)
+					_G["ChannelButton"..i.."Text"]:FontTemplate(NORMAL_FONT, 12)
+				end
 			end
 		end
+		hooksecurefunc("ChannelList_Update", Channel)
 	end
-	hooksecurefunc("ChannelList_Update", Channel)
 
 	-- Fix help frame category buttons, NFI why they need fixing
 	for i = 1, 6 do

@@ -1,5 +1,7 @@
 local K, C, L = unpack(select(2, ...))
-if C["Unitframe"].Enable ~= true or C["Filger"].Enable ~= true then return end
+if C["Unitframe"].Enable ~= true or C["Filger"].Enable ~= true or K.BFA801 then
+	return
+end
 
 ----------------------------------------------------------------------------------------
 --	The best way to add or delete spell is to go at www.wowhead.com, search for a spell.

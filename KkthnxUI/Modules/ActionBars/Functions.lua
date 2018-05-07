@@ -31,7 +31,7 @@ function K.ShiftBarUpdate()
 		button = _G["StanceButton"..i]
 		icon = _G["StanceButton"..i.."Icon"]
 		if i <= numForms then
-			texture, name, isActive, isCastable = GetShapeshiftFormInfo(i)
+			texture, isActive, isCastable = GetShapeshiftFormInfo(i)
 			icon:SetTexture(texture)
 
 			cooldown = _G["StanceButton"..i.."Cooldown"]
@@ -68,7 +68,7 @@ function K.PetBarUpdate(self, event)
 		petActionIcon = _G[buttonName.."Icon"]
 		petAutoCastableTexture = _G[buttonName.."AutoCastable"]
 		petAutoCastShine = _G[buttonName.."Shine"]
-		local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(i)
+		local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
 
 		if not isToken then
 			petActionIcon:SetTexture(texture)
@@ -79,7 +79,13 @@ function K.PetBarUpdate(self, event)
 		end
 
 		petActionButton.isToken = isToken
-		petActionButton.tooltipSubtext = subtext
+
+		if spellID then
+			local spell = Spell:CreateFromSpellID(spellID)
+			petActionButton.spellDataLoadedCancelFunc = spell:ContinueWithCancelOnSpellLoad(function()
+				petActionButton.tooltipSubtext = spell:GetSpellSubtext()
+			end)
+		end
 
 		if isActive and name ~= "PET_ACTION_FOLLOW" then
 			petActionButton:SetChecked(true)

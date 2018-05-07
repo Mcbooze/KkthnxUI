@@ -51,5 +51,9 @@ function Module:OnInitialize()
 	self:RegisterEvent("GROUP_ROSTER_UPDATE", "CheckIt")
 	self:RegisterEvent("CHAT_MSG_ADDON", "CheckIt")
 
-	RegisterAddonMessagePrefix("KkthnxUIVersion")
+	if K.BFA801 then
+		C_ChatInfo.RegisterAddonMessagePrefix("KkthnxUIVersion")
+	else
+		RegisterAddonMessagePrefix("KkthnxUIVersion")
+	end
 end

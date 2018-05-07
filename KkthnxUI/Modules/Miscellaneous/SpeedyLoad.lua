@@ -1,5 +1,7 @@
 local K, C, L = unpack(select(2, ...))
-if K.CheckAddOnState("Speedyload") then return end
+if K.CheckAddOnState("Speedyload") or K.BFA801 then
+	return
+end
 
 -- Sourced: Cybeloras (Cybeloras)
 
