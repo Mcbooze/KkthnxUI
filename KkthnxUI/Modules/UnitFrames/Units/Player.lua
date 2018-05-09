@@ -135,7 +135,6 @@ function K.CreatePlayer(self, unit)
 		K.CreateClassTotems(self, 194, 12, 6)
 		K.CreateCombatIndicator(self)
 		K.CreateLeaderIndicator(self)
-		K.CreateMasterLooterIndicator(self)
 		if C["Unitframe"].PvPText then
 			K.CreatePvPText(self, "player")
 		end

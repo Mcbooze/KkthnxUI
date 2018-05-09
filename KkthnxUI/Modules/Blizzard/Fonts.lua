@@ -159,7 +159,7 @@ local function UpdateBlizzardFonts()
 
 	-- Fix some fonts to follow our font.
 	WorldMapFrameHomeButton.text:SetFontObject(SystemFont_Shadow_Med1)
-	WorldMapFrame.UIElementsFrame.BountyBoard.BountyName:FontTemplate(nil, 14, "OUTLINE")
+	-- WorldMapFrame.UIElementsFrame.BountyBoard.BountyName:FontTemplate(nil, 14, "OUTLINE")
 	SplashFrame.Header:FontTemplate(nil, 22)
 
 	if IsAddOnLoaded("Blizzard_Collections") then
