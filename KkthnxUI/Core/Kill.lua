@@ -85,7 +85,7 @@ function Module:ADDON_LOADED(event, addon)
 		ReagentBankHelpBox:Kill()
 		TutorialFrameAlertButton:Kill()
 		SpellBookFrameTutorialButton:Kill()
-		WorldMapFrameTutorialButton:Kill()
+		-- WorldMapFrameTutorialButton:Kill()
 		if PetJournalTutorialButton then
 			PetJournalTutorialButton:Kill()
 		end
