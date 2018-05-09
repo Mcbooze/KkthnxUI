@@ -103,6 +103,6 @@ ActionBar1:SetScript("OnEvent", function(self, event, ...)
 			end
 		end
 	else
-		-- MainMenuBar_OnEvent(self, event, ...)
+		MainMenuBarMixin:OnEvent(event, ...)
 	end
 end)
